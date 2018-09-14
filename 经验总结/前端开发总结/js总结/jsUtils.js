@@ -1,0 +1,1 @@
+var rand = function(rMi, rMa){return ~~((Math.random()*(rMa-rMi+1))+rMi);};

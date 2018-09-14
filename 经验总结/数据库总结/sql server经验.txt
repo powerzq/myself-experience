@@ -1,0 +1,60 @@
+1.循环和判断语句
+说明：
+declare:声明变量id
+set:给变量赋值
+while:循环，以begin开始，以end结束
+if:判断，以begin开始，以end结束
+DATAADD(day,修改的数字(可以为负数),日期)，例如：select DATEADD(DAY,-1,'2017-07-27')在‘2017-07-27’的基础上减一天
+declare @id int
+  set @id=400
+  while @id>=400 and @id<669
+	begin 
+	if @id%2=0
+	begin
+		update [MY_YKF_Main_Real].[dbo].[InstituationOrder] set orderCreateTime=(select DATEADD(DAY,(select cast( floor(rand()*-181) as int)),(SELECT [orderCreateTime]
+		FROM [MY_YKF_Main_Real].[dbo].[InstituationOrder] where id=@id))) where id=@id
+	end
+	else
+	begin
+		update [MY_YKF_Main_Real].[dbo].[InstituationOrder] set orderCreateTime=(select DATEADD(DAY,(select cast( floor(rand()*55) as int)),(SELECT [orderCreateTime]
+		FROM [MY_YKF_Main_Real].[dbo].[InstituationOrder] where id=@id))) where id=@id
+	end
+	set @id=@id+1 
+	end
+
+2.jion on的应用
+--个人国内申请资助金额统一为500
+update tb_aidInfo set info_fundMoney = 500
+where info_guid in(
+select a.info_guid from tb_aidInfo a
+join tb_ImbApplyMan b
+on a.info_linkman = b.imb_Guid
+where info_Type = 1
+and info_TypeClass = 1
+and info_fundMoney is not null
+and pici_id is not null
+and imb_Type = 1)
+
+--其它国内申请资助金额统一为560
+update tb_aidInfo set info_fundMoney = 560
+where info_guid in(
+select a.info_guid from tb_aidInfo a
+join tb_ImbApplyMan b
+on a.info_linkman = b.imb_Guid
+where info_Type = 1
+and info_TypeClass = 1
+and info_fundMoney is not null
+and pici_id is not null
+and imb_Type != 1)
+
+--涉外资助金额30000改为29000
+update tb_aidInfo set info_fundMoney = 29000
+where info_guid in(
+select a.info_guid from tb_aidInfo a
+join tb_ImbApplyMan b
+on a.info_linkman = b.imb_Guid
+where info_Type = 4
+and info_fundMoney = 30000
+and pici_id is not null)
+
+DELETE FROM 表名称 WHERE 列名称 = 值

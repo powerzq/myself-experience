@@ -1,0 +1,179 @@
+grant all on houdunwang.* to "名字"@"localhost" identified by "密码";
+
+use houdunwang;使用houdunwang数据库
+
+desc student;显示详细内容
+
+mysqldump -uroot -p houdunwang>d:/houdunwang.sql  导出数据库到D盘
+mysql -uroot -p houdunwang<d:/houdunwang.sql  从D盘恢复数据库
+
+drop database houdunwang;  删除houdunwang这个数据库
+
+source d:/db.sql;  从D盘导入数据
+
+create database houdunwang; 创建后盾网数据库
+create table student(id int(10)) primary key auto_increment,name varchar(10),age tinyint(2);建表
+create database hd default character set utf8; 创建数据库hd并指定字符集
+create table stu(id int(10)primary key auto_increment,sname char(30) not null,sex tinyint(1) default 0,qq varchar(255)default 0) 
+create table test2 select * from test;创建一张表和test表的结构一样，这种方式建表，只是复制表结构，不复制约束（后加where id = (test中没有的数据)可以建空表）
+
+drop 删除数据和表结构，删除速度最快(直接从内存中抹去这一块数据)
+alter table test modify price decimal(10,2);修改表test中decimal的数据范围
+alter table test modify name char(10); 修改表test中name属性的类型为char(10)
+alter table test add birday date;在test表上增加birday属性（一列）类型为date
+alter table test drop （column）birday;删除表test中的birday属性（一列）
+alter table test change birday birday1;将birday该为birday1
+alter table test rename test1;将表名test改为test1
+rename table test1 to test;将表名test1改为test
+alter table test modify column id int auto_increment;更改自动为自动增长(注意：auto_increment只是MySQL中特有，其他数据库没有,只能是整型)
+alter table test
+add constraint foreign key 外键名 (外键) references 主表 (字段)
+add constraint foreign key test_fk (dept_id) references tb_dept(id);给test表添加外键约束
+alter table test 
+add constraint check(age > 18 and age < 60);给test表添加检查约束
+alter table test modify name varchar(30);修改非空约束
+alter table test drop index email;删除唯一约束
+alter table test modify id int;更改为非自动增长
+alter table test drop primary key;删除主键约束 注意：要先改为非自动增长
+alter table test drop foreign key test_fk;删除外键约束(在MySQL中自己起的名字不起作用，系统自定义了名字，Oracle中起作用)
+
+engine myisam charset set utf8;创建表stu
+insert into stu(sname,sex,qq) values("李四"，1,66515434)；插入数据
+INSERT INTO tb_dept(NAME,description,loc)
+VALUES('市场部','负责市场工作','广州'),
+('财务部','负责财务工作','广州'),
+('采购部','负责采购工作','广州');MySQL特有的，一次插入多条数据
+insert into test2(id,name,description) select id,name,description from test;从test中插入数据
+
+show database;显示所有数据库
+show tables;显示所有表
+show collation;显示字符集校对规则
+show create table stu;显示创建stu表信息
+
+select version();查看版本信息
+select database();查看当前使用数据库
+select sname,sex from stu;查找stu中的sname,sex
+select * from stu where sname="李四";从表stu中查找出是李四的所有信息
+select * from stu where sname like "李%";从表stu中查找出所有以李开头的人
+select if(sex,"男","女"),sname,sex from stu;如果当sex为1是男，为0是女，显示sname,sex
+select if(sex,"男","女")as stusex,sname,sex from stu;取if(sex,"男","女")的别名为stusex
+select sname,sex from stu where sname like "李%" and sex=0;
+select concat("姓名：",sname,"性别：",sex,"QQ：",qq)as stuinfo from stu where sex=0 or sname="%玉%";  使用concat连接字符(结果-》姓名：全额账号：8888身份证号：512525199010271234)
+select * from stu order by id desc/asc limit 5;以降序/升序排列显示前5列
+select sname,birday from stu order by birday asc limit 1,1;  取升序数组中的第2个开始的1个元素
+select * from test order by sal desc;工资从高到底排列(默认是从低到高，ASC)
+select * from stu where birday<=(select birday from stu order by birday asc limit 1,1);
+select distinct year(dirday) as"学生出生年份" from stu;   使用distinct可以去掉重复项
+select length(name),length(name2) from stu;显示有几个字节
+select char_length(name),char_length(name) from stu;显示有几个字符
+select * from test where id is null;
+select * from test where id = 0;
+select ename '姓名'from test;通过别名显示
+select ename as '姓名' from test;同上
+组函数忽略空值
+select AVG(sal) from test;查test中的平均工资
+select SUM(sal) from test;查test中的总工资
+select MAX(sal) from test;查test中最大的
+select MIN(sal) from test;查test中最小的
+select count(*) from test;查询所有条数，不忽略空值
+select count(comm) from test;这里count不统计null
+select deptno,AVG(sal) from test group by deptno;通过分组查询部门平均工资
+
+select的常规写法
+select *		     选择哪些列
+from test     		     从何处选择行
+where primary_constraint     行必须满足什么条件
+group by grouping_colnumns   怎样对结果分组
+having secondary_constraint  行必须满足的第二条件
+order by sorting_columns     怎样对结果排序
+limit offset_start,row_count 结果限定
+
+常用于做分页技术的limit
+select * from test limit 5;显示前5条记录
+select * from test limit 5,10;显示6-10条记录
+
+where sal>1000 and sal<300;
+where sal between 1000 and 1500;(包含最大值和最小值)
+where sal in(793,873,974);sal包含793,873,974的
+where name like '_密%';(%)可表示零或多个字符，(_)可表示一个字符
+where 子句中不可以使用组函数，可以使用having替代
+having AVG(sal) >3000;having只能用在group by之后
+
+update stu set birday="1990/5/23" where id=1;更新表stu中id=1的birday数据
+delete删除数据，保留表结构，可以回滚，如果删除的数据量大，很慢，回滚是因为备份了删除的数据(删除数据时有两个动作：1.删除，2.备份)
+delete from demo where name='a';删除name='a'的信息(不用指明列，因为是删除一行数据)
+truncate删除所以数据，保留表结构，不可以回滚，一次全部删除所以数据，速度相对较快
+truncate from test;截断表，DDL语句，删除所以表数据
+
+primary key 主键，作用：主键是表中唯一确定一行数据的字段，可以是单字段或者是多字段的组合，联合主键
+解决数据冗余:通过一个字段就可以查询到其他相关信息
+外键：constraint foreign key 外键名[表名+约束名] (外键) references 主表(字段)
+constraint foreign key tb_emp_fk (dept_id) references tb_dept(id)
+check约束在MySQL中不起作用
+
+数据库机制，auto_commit,值是true和false;
+查询MySQL自动提交设置(1.自动提交 0.手动提交)
+select @@autocommit;
+
+内连接  连接条件就是主外键关联
+select * from tb_dept d,tb_emp e where d.deptno=e.deptno
+select * from tb_dept inner join tb_emp on tb_dept.deptno=tb_emp.deptno
+
+左外连接中，某些不满足条件的列也会显示出来，也就是说，只限制其中一个表的行，而不限制另一个表的行
+tb_dept做主表，左边的表为主表，左边的表记录全部显示，如果没找到记录则补NULL
+select * from tb_dept left join tb_emp on tb_dept.deptno=tb_emp.deptno
+
+右外连接
+tb_dept做主表，右边的表为主表，右边的表记录全部显示，如果没找到记录则补NULL
+select * from tb_dept right join tb_emp on tb_dept.deptno=tb_emp.deptno
+
+
+索引
+作用：在数据库中用来加速对表的查询
+创建：自动在主键和唯一键上面创建索引
+手动创建索引：create INDEX index_tb_sutent_name on tb_student(stu_name);
+
+视图：
+作用：可以使复杂的查询变得简单
+简单视图
+创建
+create view emp_v_10 as
+select empno as 部门编号,ename 员工姓名,sal 工资
+from tb_emp
+where deptno=10;
+
+通过建立的视图进行查询:select * from emp_v_10
+
+复杂视图
+create view emp_v as
+select deptno as 部门编号,avg(sal) as 平均工资,max(sal) as 最高工资,min(sal) as 最低工资,sum(sal) as 工资总数,count(1) 部门人员
+from tb_emp group by deptno
+
+使用
+select * from emp_v;
+
+学生与课程的多对多关系
+再建一个表tb_student_course
+create table tb_student_course(
+id int primary key auto_increment,
+student_id int,
+course_id int,
+grade int,
+unique (student_id,course_id),
+constraint tb_student_fk foreign key (student_id) references tb_student(id),
+constraint tb_course_fk foreign key (course_id) references tb_course(id)
+)
+
+update table set name='xxx';//将表里面所有的name字段改为xxx
+
+
+
+
+
+
+
+
+
+
+
+

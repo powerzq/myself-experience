@@ -1,0 +1,14 @@
+task count << {
+	4.times{println "$it"}
+}
+
+task intro(dependsOn: count)<<{
+	println "I'm gradle"
+}
+
+4.times{counter->
+	task "task$counter"<<{
+		println "hello $counter"
+	}
+	
+}

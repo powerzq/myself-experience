@@ -1,0 +1,61 @@
+﻿@charset "utf-8";
+
+/*滚动大图在任意显示器下全屏显示*/
+.banner{
+	    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    display: none\9;
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    transition: 1s;
+    -webkit-transition: 1s;
+    background: no-repeat center;
+    background-size: cover;
+}
+
+/*border-radius高级用法*/
+.map-point{
+	width: 100px;
+	height: 100px;
+	background: #000;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
+	border-radius: 50% 50% 0 50%;
+}
+
+/*css3渐变效果*/
+.test{
+	width: 100px;
+	height: 100px;
+	background:linear-gradient(to right,#000 0,#11EA22 30%,#293EC2 80%,red 100%);
+}
+
+/*css3渐变写斜线*/
+.line{
+	width: 100px;
+	height: 100px;
+	background:linear-gradient(45deg,transform 49%,#000 0,#000 50%,transform 0);//后面的不会覆盖前面的开始之前的颜色
+	//角度为正是顺时针旋转
+}
+
+div{/* 单行溢出隐藏 */
+            width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+}
+
+div{/* 多行溢出隐藏 */
+            width: 150px;
+              display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+}
